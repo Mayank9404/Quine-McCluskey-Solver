@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {% load static %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Quine McCluskey Solver</title>
+    <link rel="icon" type="image/jpeg" sizes="2000x400" href="{% static 'img/binary-2910663.jpg'%}">
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css'%}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,400i,700,700i">
+    <link rel="stylesheet" href="{% static 'fonts/ionicons.min.css'%}">
+    <link rel="stylesheet" href="{% static 'css/styles.min.css'%}">
+</head>
+
+<body style="background: linear-gradient(rgba(47, 23, 15, 0.65), rgba(255,249,247,0.17) 0%, rgba(47, 23, 15, 0.65)), url(&quot;{% static 'img/background-1747776.jpg'%}&quot;) repeat;">
+    <h1 class="text-center text-white d-none d-lg-block site-heading"><span class="text-capitalize text-dark site-heading-lower" style="font-family: Lora, serif;">Quine McCluskey Solver</span></h1>
+    <section class="page-section about-heading">
+        <div class="container"><img class="img-fluid rounded about-heading-img mb-3 mb-lg-0" src="{% static 'img/binary-2910663.jpg'%}">
+            <div class="about-heading-content">
+                <div class="row">
+                    <div class="col-lg-10 col-xl-9 mx-auto">
+                        <div class="bg-faded rounded p-5">
+                            <h2 class="section-heading mb-4"><span class="section-heading-upper">Fill the details</span></h2>
+                            <form method="get">
+                                <label for="min">Enter the minterms (space seperated):</label>
+                                <input type="text" name="minterms" id="min" required=True><br>
+                                <label for="dc">Enter the don't care terms (if any):</label>
+                                <input type="text" name="dontcare" id="dc"><br>
+                                <input type="submit" value="Solve">
+                                
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if status %}
+        <div class="container">
+            <div class="table-responsive table-bordered border rounded float-left" style="width: 48%;/*display: inline;*/margin: 5px;padding: 9px;">
+                <table class="table table-striped table-bordered table-hover table-dark">
+                    <thead>
+                        <tr>
+                            <th width="33%">Group Number</th>
+                            <th width="33%">Minterms</th>
+                            <th>Binary Form</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in first_group %}
+                        {% for k,v in i.items %}
+                        {% for bin,dec in v.items %}
+                        <tr>
+                            <td>{{k}}</td>
+                            <td>m({{dec}})</td>
+                            <td>{{bin}}</td>
+                        </tr>
+                        {% endfor %}
+                        {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if second_group %}
+            <div class="table-responsive table-bordered border rounded float-left" style="width: 48%;/*display: inline;*/margin: 5px;padding: 9px;">
+                <table class="table table-striped table-bordered table-dark">
+                    <thead>
+                        <tr>
+                            <th width="33%">Group Number</th>
+                            <th>Minterms</th>
+                            <th>Binary Form</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in second_group %}
+                        {% for k,v in i.items %}
+                        {% for bin,dec in v.items %}
+                        <tr>
+                            <td>{{k}}</td>
+                            <td>m({{dec}})</td>
+                            <td>{{bin}}</td>
+                        </tr>
+                        {% endfor %}
+                        {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+            {% if third_group %}
+            <div class="table-responsive table-bordered border rounded" style="padding: 9px;margin-top: 5px;">
+                <table class="table table-striped table-bordered table-dark">
+                    <thead>
+                        <tr>
+                            <th>Group Number</th>
+                            <th>Minterms</th>
+                            <th>Binary Form</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in third_group %}
+                        {% for k,v in i.items %}
+                        {% for bin,dec in v.items %}
+                        <tr>
+                            <td>{{k}}</td>
+                            <td>m({{dec}})</td>
+                            <td>{{bin}}</td>
+                        </tr>
+                        {% endfor %}
+                        {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+            <p class="d-inline-block" style="margin-top: 16px;margin-bottom: 16px;"><strong>All Prime Implicants: {{all_prime}}</strong></p><br>
+            <p class="d-inline-block" style="margin-top: 16px;margin-bottom: 10px; font-size: 20px;"><strong>Prime Implicants Chart:</strong></p>
+            <div class="table-responsive table-bordered border rounded" style="padding: 9px;margin-top: 5px;">
+                <table class="table table-striped table-bordered table-dark">
+                    <thead>
+                        <tr>
+                            <th>Minterms</th>
+                            {% for i in prime_header %}
+                            <th>{{i}}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            {% for key,value in prime_t.items %}
+                            <td>{{key}}</td>
+                            {% for i in value  %}
+                            {% if i == 0 %}
+                            <td> </td>
+                            {% else %}
+                            <td> X </td>
+                            {% endif %}
+                            {% endfor %}
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <p style="margin-top: 16px;font-size: 18px;text-align: left;"><strong>Essential Prime Implicants: {{essential}}</strong></p>
+        </div>
+        {%if solu%}
+        <p class="text-center" style="border-style: none;text-align: center;font-size: 20px;"><strong>Solution: F = {{solu}}</strong></p>
+        {% endif %}
+        {% endif %}
+    </section>
+    <div class="d-block social-icons" style="width: 100%;height: 100px;background: rgb(72,33,4);padding: 26px;padding-bottom: 30px;"><a href="https://www.linkedin.com/in/mayank9404"><i class="icon ion-social-linkedin"></i></a><a href="mailto: mayank9404@gmail.com"><i class="icon ion-android-mail"></i></a><a href="https://twitter.com/mayank0610"><i class="icon ion-social-twitter"></i></a></div>
+    <script
+        src="{% static 'js/jquery.min.js'%}"></script>
+        <script src="{% static 'bootstrap/js/bootstrap.min.js'%}"></script>
+        <script src="{% static 'js/script.min.js'%}"></script>
+</body>
+
+</html>
